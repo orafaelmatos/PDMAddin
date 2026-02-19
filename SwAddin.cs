@@ -4,24 +4,52 @@ using SolidWorks.Interop.swconst;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 
 namespace PDMAddin
 {
     [Guid("D2234567-E89B-12D3-A456-426614174001")]
     [ComVisible(true)]
+    [ProgId("PDMAddin.SwAddin")]
     public class SwAddin : ISwAddin
     {
         private ISldWorks _swApp;
 
+        private int _cookie;
+
+        private TaskpaneView _taskpaneView;
+        private TaskpaneHost _taskpaneHost;
+
+        static SwAddin()
+        {
+            System.Windows.Media.RenderOptions.ProcessRenderMode =
+                System.Windows.Interop.RenderMode.SoftwareOnly;
+
+            System.AppContext.SetSwitch(
+                "Switch.System.Windows.Media.ShouldRenderEvenWhenNoDisplayDevicesAreAvailable",
+                true);
+        }
+
+        private void CreateTaskpane()
+        {
+            string iconPath = @"C:\PDMAddin\icon.bmp"; // 20x20 BMP
+
+            _taskpaneView = _swApp.CreateTaskpaneView2(iconPath, "Gestor");
+
+            _taskpaneHost = new TaskpaneHost();
+
+            _taskpaneView.DisplayWindowFromHandle(_taskpaneHost.Handle.ToInt32());
+        }
+
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
             _swApp = (ISldWorks)ThisSW;
+            _cookie = Cookie;
 
-            _swApp.SendMsgToUser2(
-                "PDM Addin Loaded Successfully",
-                (int)swMessageBoxIcon_e.swMbInformation,
-                (int)swMessageBoxBtn_e.swMbOk);
+            _swApp.SetAddinCallbackInfo2(0, this, _cookie);
+
+            CreateTaskpane();
 
             return true;
         }
