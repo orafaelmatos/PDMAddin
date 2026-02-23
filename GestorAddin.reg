@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\SolidWorks\Addins\{D2234567-E89B-12D3-A456-426614174001}]
+@="Gestor Addin"
+"Description"="Vault and Changes Manager"
+"LoadAtStartup"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\SolidWorks\AddinsStartup\{D2234567-E89B-12D3-A456-426614174001}]
+@=dword:00000001
